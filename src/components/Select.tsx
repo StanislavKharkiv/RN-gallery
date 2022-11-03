@@ -1,6 +1,6 @@
 import {Picker} from '@react-native-picker/picker';
 import React, {Key} from 'react';
-import {StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle} from 'react-native';
+import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
 
 interface SelectProps<T> {
   items: Array<T>;

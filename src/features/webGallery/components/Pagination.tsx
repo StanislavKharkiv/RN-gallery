@@ -1,24 +1,43 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ToastAndroid,
+} from 'react-native';
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
 import {fetchWebGallery} from '../webGalleryThunk';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {STYLE} from '../../../constants';
+import {CONNECT_ERROR, STYLE} from '../../../constants';
+import {useNetInfo} from '@react-native-community/netinfo';
 
 export function Pagination({icon}: {icon: string}) {
+  const netInfo = useNetInfo();
   const dispatch = useAppDispatch();
   const {fetchParams, total_pages, total} = useAppSelector(
     state => state.webGallery,
   );
   const {page} = fetchParams;
 
+  const onChangePage = (cb: () => void) => {
+    if (netInfo.isInternetReachable) cb();
+    if (netInfo.isInternetReachable === false) {
+      ToastAndroid.show(CONNECT_ERROR, ToastAndroid.SHORT);
+    }
+  };
+
   const handlePrevPage = () => {
-    if (page <= 1) return;
-    dispatch(fetchWebGallery({page: page - 1}));
+    onChangePage(() => {
+      if (page <= 1) return;
+      dispatch(fetchWebGallery({page: page - 1}));
+    });
   };
   const handleNextPage = () => {
-    if (total_pages && page >= total_pages) return;
-    dispatch(fetchWebGallery({page: page + 1}));
+    onChangePage(() => {
+      if (total_pages && page >= total_pages) return;
+      dispatch(fetchWebGallery({page: page + 1}));
+    });
   };
 
   return (
