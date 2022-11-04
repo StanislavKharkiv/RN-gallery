@@ -26,7 +26,7 @@ const CLOSED_FILTERS = 0;
 const FILTER_HEIGHT = 340;
 
 export function WebGallery() {
-  const netInfo = useNetInfo();
+  const {isInternetReachable} = useNetInfo();
   const dispatch = useAppDispatch();
   const {items, status, fetchParams, currentImage, isShowCurrent, liked} =
     useAppSelector(state => state.webGallery);
@@ -50,14 +50,12 @@ export function WebGallery() {
   }, [dispatch, status, fetchParams]);
 
   useEffect(() => {
-    if (netInfo.isInternetReachable === false) {
-      ToastAndroid.show(CONNECT_ERROR, ToastAndroid.SHORT);
-    }
-    if (netInfo.isInternetReachable && items.length === 0) {
+    if (isInternetReachable === false) ToastAndroid.show(CONNECT_ERROR, 1);
+    if (isInternetReachable && items.length === 0) {
       dispatch(fetchWebGallery(fetchParams));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [netInfo.isInternetReachable]);
+  }, [isInternetReachable]);
 
   const closeModal = useCallback(() => setModalCoords(null), []);
 

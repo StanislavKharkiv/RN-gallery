@@ -16,13 +16,7 @@ import {
   addFavoriteImage,
   toggleIsShowCurrent,
 } from '../features/webGallery/webGallerySlice';
-import {
-  HandlerStateChangeEvent,
-  LongPressGestureHandler,
-  LongPressGestureHandlerEventPayload,
-  TapGestureHandler,
-  State,
-} from 'react-native-gesture-handler';
+import {GestureDetector, Gesture} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Coordinates} from '../types';
 
@@ -37,47 +31,51 @@ export function GalleryItem(props: GalleryItemProps) {
   const dispatch = useAppDispatch();
   const imageDescription = description ?? alt_description;
   const toastText = props.liked ? 'Removed from favorite' : 'Added to favorite';
-  const handleLikeImage = ({
-    nativeEvent,
-  }: HandlerStateChangeEvent<LongPressGestureHandlerEventPayload>) => {
-    if (nativeEvent.state === State.END) {
-      dispatch(addFavoriteImage(id));
-      ToastAndroid.show(toastText, ToastAndroid.SHORT);
+
+  const singleTap = Gesture.Tap().onEnd((_event, success) => {
+    if (success) {
+      dispatch(addCurrentImage(props.item));
+      dispatch(toggleIsShowCurrent(true));
     }
-  };
+  });
+  const doubleTap = Gesture.Tap()
+    .numberOfTaps(2)
+    .onEnd((_event, success) => {
+      if (success) {
+        dispatch(addFavoriteImage(id));
+        ToastAndroid.show(toastText, ToastAndroid.SHORT);
+      }
+    });
+  const longTap = Gesture.LongPress()
+    .minDuration(600)
+    .onEnd((event, success) => {
+      if (success) {
+        props.setCoords({
+          x: event.absoluteX as number,
+          y: event.absoluteY as number,
+        });
+      }
+    });
+
+  const taps = Gesture.Exclusive(doubleTap, singleTap, longTap);
 
   return (
-    <LongPressGestureHandler
-      onHandlerStateChange={handleLikeImage}
-      minDurationMs={800}>
-      <TapGestureHandler
-        numberOfTaps={2}
-        onBegan={() => dispatch(addCurrentImage(props.item))}
-        onEnded={({nativeEvent}) => {
-          props.setCoords({
-            x: nativeEvent.absoluteX as number,
-            y: nativeEvent.absoluteY as number,
-          });
-        }}
-        onFailed={() => dispatch(toggleIsShowCurrent(true))}>
-        <View style={[styles.galleryItem, styles.shadowProp]} key={id}>
-          <Image source={{uri: urls.small}} style={styles.img} />
-          {imageDescription && (
-            <Text style={styles.imgDescription}>
-              {cutText(imageDescription)}
-            </Text>
-          )}
-          {props.liked && (
-            <Icon
-              name="favorite"
-              size={20}
-              style={styles.favorite}
-              color="rgba(255, 0, 0, .5)"
-            />
-          )}
-        </View>
-      </TapGestureHandler>
-    </LongPressGestureHandler>
+    <GestureDetector gesture={taps}>
+      <View style={[styles.galleryItem, styles.shadowProp]} key={id}>
+        <Image source={{uri: urls.small}} style={styles.img} />
+        {imageDescription && (
+          <Text style={styles.imgDescription}>{cutText(imageDescription)}</Text>
+        )}
+        {props.liked && (
+          <Icon
+            name="favorite"
+            size={20}
+            style={styles.favorite}
+            color="rgba(255, 0, 0, .5)"
+          />
+        )}
+      </View>
+    </GestureDetector>
   );
 }
 

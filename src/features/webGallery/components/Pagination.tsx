@@ -13,7 +13,7 @@ import {CONNECT_ERROR, STYLE} from '../../../constants';
 import {useNetInfo} from '@react-native-community/netinfo';
 
 export function Pagination({icon}: {icon: string}) {
-  const netInfo = useNetInfo();
+  const {isInternetReachable} = useNetInfo();
   const dispatch = useAppDispatch();
   const {fetchParams, total_pages, total} = useAppSelector(
     state => state.webGallery,
@@ -21,10 +21,8 @@ export function Pagination({icon}: {icon: string}) {
   const {page} = fetchParams;
 
   const onChangePage = (cb: () => void) => {
-    if (netInfo.isInternetReachable) cb();
-    if (netInfo.isInternetReachable === false) {
-      ToastAndroid.show(CONNECT_ERROR, ToastAndroid.SHORT);
-    }
+    if (isInternetReachable) cb();
+    if (isInternetReachable === false) ToastAndroid.show(CONNECT_ERROR, 1);
   };
 
   const handlePrevPage = () => {
