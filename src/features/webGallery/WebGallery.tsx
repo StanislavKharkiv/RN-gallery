@@ -33,6 +33,7 @@ export function WebGallery() {
   const [isOpenFilters, setIsOpenFilters] = useState(false);
   const [modalCoords, setModalCoords] = useState<Coordinates | null>(null);
   const filterAnim = useRef(new Animated.Value(CLOSED_FILTERS)).current;
+  const isShowModal = currentImage && modalCoords;
 
   const handleOpenFilters = () => {
     setIsOpenFilters(true);
@@ -85,6 +86,7 @@ export function WebGallery() {
                   key={item.id}
                   liked={liked.some(id => id === item.id)}
                   setCoords={setModalCoords}
+                  isActive={!!isShowModal && currentImage?.id === item.id}
                 />
               ))}
             </View>
@@ -95,7 +97,7 @@ export function WebGallery() {
           <Pagination icon={isOpenFilters ? 'close' : 'play-arrow'} />
         </TouchableHighlight>
         <Filters height={filterAnim} onSubmit={handleCloseFilters} />
-        {currentImage && modalCoords && (
+        {isShowModal && (
           <ImageModal
             image={currentImage}
             coords={modalCoords}

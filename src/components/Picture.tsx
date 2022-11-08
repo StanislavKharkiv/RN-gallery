@@ -27,8 +27,8 @@ export function Picture({image, imageList, addCurrentPicture}: PictureProps) {
   );
 
   return (
-    <TapGestureHandler onEnded={() => setIsShowInfo(!isShowInfo)}>
-      <View style={styles.wrapper}>
+    <View style={styles.wrapper}>
+      <TapGestureHandler onEnded={() => setIsShowInfo(!isShowInfo)}>
         <ImageViewer
           imageUrls={imageList}
           loadingRender={() => <Loader />}
@@ -36,16 +36,16 @@ export function Picture({image, imageList, addCurrentPicture}: PictureProps) {
           index={imageIndex}
           onChange={addCurrentPicture}
         />
-        {isShowInfo && (
-          <View style={styles.imageInfo}>
-            <PictureInfo image={image} />
-          </View>
-        )}
-        <TouchableOpacity onPress={handleClosePicture} style={styles.close}>
-          <Icon name="close" size={30} />
-        </TouchableOpacity>
-      </View>
-    </TapGestureHandler>
+      </TapGestureHandler>
+      {isShowInfo && (
+        <View style={styles.imageInfo}>
+          <PictureInfo image={image} />
+        </View>
+      )}
+      <TouchableOpacity onPress={handleClosePicture} style={styles.close}>
+        <Icon name="close" size={30} color="red" />
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -60,13 +60,13 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     width: '100%',
-    backgroundColor: 'rgba(255,255,255, .7)',
+    backgroundColor: 'rgba(0,0,0, .7)',
   },
   close: {
     position: 'absolute',
     right: 10,
     top: 10,
-    backgroundColor: 'rgba(255,255,255, .7)',
+    backgroundColor: 'white',
     borderRadius: 50,
   },
 });

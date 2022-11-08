@@ -17,10 +17,10 @@ export function ImageModal({image, coords, closeModal}: ImageModalProps) {
     height / 2 < coords.y ? {bottom: height - coords.y} : {top: coords.y};
 
   return (
-    <TapGestureHandler onHandlerStateChange={() => closeModal()}>
+    <TapGestureHandler onEnded={() => closeModal()}>
       <View style={styles.wrapper}>
         <View style={[styles.modal, modalCoords]}>
-          <PictureInfo image={image} />
+          <PictureInfo image={image} dark />
         </View>
       </View>
     </TapGestureHandler>

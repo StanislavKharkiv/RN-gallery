@@ -25,12 +25,14 @@ interface GalleryItemProps {
   item: WebGalleryItem;
   liked?: boolean;
   setCoords: (coords: Coordinates) => void;
+  isActive?: boolean;
 }
 export function GalleryItem(props: GalleryItemProps) {
   const {description, alt_description, urls, id} = props.item;
+  const {liked, setCoords, isActive = false} = props;
   const dispatch = useAppDispatch();
   const imageDescription = description ?? alt_description;
-  const toastText = props.liked ? 'Removed from favorite' : 'Added to favorite';
+  const toastText = liked ? 'Removed from favorite' : 'Added to favorite';
 
   const singleTap = Gesture.Tap().onEnd((_event, success) => {
     if (success) {
@@ -50,7 +52,8 @@ export function GalleryItem(props: GalleryItemProps) {
     .minDuration(600)
     .onEnd((event, success) => {
       if (success) {
-        props.setCoords({
+        dispatch(addCurrentImage(props.item));
+        setCoords({
           x: event.absoluteX as number,
           y: event.absoluteY as number,
         });
@@ -61,7 +64,13 @@ export function GalleryItem(props: GalleryItemProps) {
 
   return (
     <GestureDetector gesture={taps}>
-      <View style={[styles.galleryItem, styles.shadowProp]} key={id}>
+      <View
+        style={[
+          styles.galleryItem,
+          styles.shadowProp,
+          isActive && styles.active,
+        ]}
+        key={id}>
         <Image source={{uri: urls.small}} style={styles.img} />
         {imageDescription && (
           <Text style={styles.imgDescription}>{cutText(imageDescription)}</Text>
@@ -78,13 +87,17 @@ export function GalleryItem(props: GalleryItemProps) {
     </GestureDetector>
   );
 }
+const itemBorder = 1;
+const itemMargin = 8;
+const imgSize = win.width / 2 - itemMargin * 2 - itemBorder * 2;
 
-const imgSize = win.width / 2 - 16;
 const styles = StyleSheet.create({
   galleryItem: {
-    margin: 8,
-    width: imgSize,
+    margin: itemMargin,
+    width: imgSize + itemBorder * 2,
     backgroundColor: '#fff',
+    borderWidth: itemBorder,
+    borderColor: 'transparent',
   },
   img: {
     width: imgSize,
@@ -99,6 +112,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 4,
     top: 4,
+  },
+  active: {
+    borderColor: 'goldenrod',
+    transform: [{scale: 1.04}],
   },
   shadowProp: STYLE.shadow,
 });
