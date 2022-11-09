@@ -14,11 +14,13 @@ import {cutText} from '../helpers';
 import {
   addCurrentImage,
   addFavoriteImage,
-  toggleIsShowCurrent,
 } from '../features/webGallery/webGallerySlice';
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Coordinates} from '../types';
+import {COLORS} from '../utils';
+import {useLinkTo} from '@react-navigation/native';
+import {routes} from '../routes';
 
 const win = Dimensions.get('window');
 interface GalleryItemProps {
@@ -31,13 +33,14 @@ export function GalleryItem(props: GalleryItemProps) {
   const {description, alt_description, urls, id} = props.item;
   const {liked, setCoords, isActive = false} = props;
   const dispatch = useAppDispatch();
+  const linkTo = useLinkTo();
   const imageDescription = description ?? alt_description;
   const toastText = liked ? 'Removed from favorite' : 'Added to favorite';
 
   const singleTap = Gesture.Tap().onEnd((_event, success) => {
     if (success) {
       dispatch(addCurrentImage(props.item));
-      dispatch(toggleIsShowCurrent(true));
+      linkTo(`/${routes.local}`);
     }
   });
   const doubleTap = Gesture.Tap()
@@ -114,7 +117,7 @@ const styles = StyleSheet.create({
     top: 4,
   },
   active: {
-    borderColor: 'goldenrod',
+    borderColor: COLORS.secondary,
     transform: [{scale: 1.04}],
   },
   shadowProp: STYLE.shadow,

@@ -11,6 +11,7 @@ import {fetchWebGallery} from '../webGalleryThunk';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {CONNECT_ERROR, STYLE} from '../../../constants';
 import {useNetInfo} from '@react-native-community/netinfo';
+import {COLORS} from '../../../utils';
 
 export function Pagination({icon}: {icon: string}) {
   const {isInternetReachable} = useNetInfo();
@@ -40,9 +41,9 @@ export function Pagination({icon}: {icon: string}) {
 
   return (
     <View style={styles.pagination}>
-      <Icon style={styles.arrow} name={icon} />
+      <Icon style={styles.arrow} name={icon} color={COLORS.secondary} />
       <TouchableOpacity onPress={handlePrevPage}>
-        <Icon name="navigate-before" size={40} />
+        <Icon name="navigate-before" size={40} color={COLORS.secondary} />
       </TouchableOpacity>
       <Text style={styles.data}>
         Found images: <Text style={styles.pageNumber}>{total}</Text>
@@ -51,7 +52,7 @@ export function Pagination({icon}: {icon: string}) {
         Page: <Text style={styles.pageNumber}>{fetchParams.page}</Text>
       </Text>
       <TouchableOpacity onPress={handleNextPage}>
-        <Icon name="navigate-next" size={40} />
+        <Icon name="navigate-next" size={40} color={COLORS.secondary} />
       </TouchableOpacity>
     </View>
   );

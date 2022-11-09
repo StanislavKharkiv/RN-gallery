@@ -47,7 +47,7 @@ export interface WebGalleryState {
   total: null | number;
   total_pages: null | number;
   currentImage: WebGalleryItem | null;
-  isShowCurrent: boolean;
+  // isShowCurrent: boolean;
   liked: Array<string>;
   fetchParams: WebGalleryFetchParams;
 }

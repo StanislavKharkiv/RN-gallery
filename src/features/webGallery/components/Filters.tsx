@@ -4,6 +4,7 @@ import {Select} from '../../../components/Select';
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 import {fetchWebGallery} from '../webGalleryThunk';
 import {WebGalleryFetchParams} from '../types';
+import {COLORS} from '../../../utils';
 
 const IMG_PER_PAGE: Array<number> = [10, 20, 30];
 const ORIENTATION: Array<WebGalleryFetchParams['orientation']> = [
@@ -71,7 +72,11 @@ export function Filters({height, onSubmit}: FiltersProps) {
           style={styles.select}
         />
       </View>
-      <Button title="get" onPress={handleFilterSubmit} color="slategray" />
+      <Button
+        title="get"
+        onPress={handleFilterSubmit}
+        color={COLORS.secondary}
+      />
     </Animated.View>
   );
 }

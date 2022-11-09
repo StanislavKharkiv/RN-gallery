@@ -3,13 +3,13 @@ import {StyleSheet, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {WebGalleryItem} from '../features/webGallery/types';
 import {DownloadImage} from './DownloadImage';
+import {COLORS} from '../utils';
 
 interface PictureInfoProps {
   image: WebGalleryItem;
   dark?: boolean;
 }
 const ICON_SIZE = 20;
-const ICON_COLOR = 'goldenrod';
 
 export function PictureInfo({image, dark = false}: PictureInfoProps) {
   const textColor = dark ? styles.darkText : styles.lightText;
@@ -25,12 +25,20 @@ export function PictureInfo({image, dark = false}: PictureInfoProps) {
       </View>
       <View style={styles.row}>
         <View style={styles.like}>
-          <Icon name="thumb-up-off-alt" size={ICON_SIZE} color={ICON_COLOR} />
+          <Icon
+            name="thumb-up-off-alt"
+            size={ICON_SIZE}
+            color={COLORS.secondary}
+          />
           <Text style={textColor}> {image.likes}</Text>
         </View>
         <DownloadImage url={image.links.download}>
           <View style={styles.download}>
-            <Icon name="file-download" size={ICON_SIZE} color={ICON_COLOR} />
+            <Icon
+              name="file-download"
+              size={ICON_SIZE}
+              color={COLORS.secondary}
+            />
           </View>
         </DownloadImage>
       </View>
@@ -56,7 +64,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   download: {
-    borderColor: ICON_COLOR,
+    borderColor: COLORS.secondary,
     borderWidth: 2,
     padding: 5,
     borderRadius: 50,

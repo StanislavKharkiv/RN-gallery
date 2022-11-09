@@ -1,45 +1,56 @@
-import React, {useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {WebGalleryItem, ImageList} from '../features/webGallery/types';
-import {useAppDispatch} from '../app/hooks';
-import {toggleIsShowCurrent} from '../features/webGallery/webGallerySlice';
+import {ImageList} from '../features/webGallery/types';
+import {useAppDispatch, useAppSelector} from '../app/hooks';
+import {addCurrentImage} from '../features/webGallery/webGallerySlice';
 import {TapGestureHandler} from 'react-native-gesture-handler';
 import {PictureInfo} from './PictureInfo';
 import {Loader} from './Loader';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import {routes} from '../routes';
+import {useLinkTo} from '@react-navigation/native';
 
-interface PictureProps {
-  image: WebGalleryItem;
-  imageList: ImageList;
-  addCurrentPicture: (index?: number) => void;
-}
-
-export function Picture({image, imageList, addCurrentPicture}: PictureProps) {
+export function PictureSlider() {
+  const {currentImage, items} = useAppSelector(state => state.webGallery);
   const dispatch = useAppDispatch();
+  const linkTo = useLinkTo();
   const [isShowInfo, setIsShowInfo] = useState(true);
 
-  const handleClosePicture = () => dispatch(toggleIsShowCurrent(false));
+  const pictureList = useMemo(
+    () => items.map(({urls, id}) => ({url: urls.full, id})) as ImageList,
+    [items],
+  );
 
   const imageIndex = useMemo(
-    () => imageList.findIndex(({id}) => id === image.id),
-    [image, imageList],
+    () => pictureList.findIndex(({id}) => id === currentImage?.id),
+    [pictureList, currentImage],
   );
+
+  const setCurrentImage = useCallback(
+    (index?: number) => {
+      const current = items.find(({id}) => id === pictureList[index!].id);
+      if (current) dispatch(addCurrentImage(current));
+    },
+    [dispatch, items, pictureList],
+  );
+
+  const handleClosePicture = () => linkTo(`/${routes.unsplash}`);
 
   return (
     <View style={styles.wrapper}>
       <TapGestureHandler onEnded={() => setIsShowInfo(!isShowInfo)}>
         <ImageViewer
-          imageUrls={imageList}
+          imageUrls={pictureList}
           loadingRender={() => <Loader />}
           onClick={() => setIsShowInfo(!isShowInfo)}
           index={imageIndex}
-          onChange={addCurrentPicture}
+          onChange={setCurrentImage}
         />
       </TapGestureHandler>
       {isShowInfo && (
         <View style={styles.imageInfo}>
-          <PictureInfo image={image} />
+          <PictureInfo image={currentImage!} />
         </View>
       )}
       <TouchableOpacity onPress={handleClosePicture} style={styles.close}>

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -9,18 +9,20 @@ import {
   ToastAndroid,
 } from 'react-native';
 import {useNetInfo} from '@react-native-community/netinfo';
+import {
+  Directions,
+  FlingGestureHandler,
+  State,
+} from 'react-native-gesture-handler';
 import {CONNECT_ERROR} from '../../constants';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {fetchWebGallery} from './webGalleryThunk';
 import {GalleryItem} from '../../components/GalleryItem';
 import {Pagination} from './components/Pagination';
 import {Filters} from './components/Filters';
-import {Picture} from '../../components/Picture';
 import {ImageModal} from '../../components/ImageModal';
 import {Loader} from '../../components/Loader';
 import {Coordinates} from '../../types';
-import {ImageList} from './types';
-import {addCurrentImage} from './webGallerySlice';
 
 const CLOSED_FILTERS = 0;
 const FILTER_HEIGHT = 340;
@@ -28,8 +30,9 @@ const FILTER_HEIGHT = 340;
 export function WebGallery() {
   const {isInternetReachable} = useNetInfo();
   const dispatch = useAppDispatch();
-  const {items, status, fetchParams, currentImage, isShowCurrent, liked} =
-    useAppSelector(state => state.webGallery);
+  const {items, status, fetchParams, currentImage, liked} = useAppSelector(
+    state => state.webGallery,
+  );
   const [isOpenFilters, setIsOpenFilters] = useState(false);
   const [modalCoords, setModalCoords] = useState<Coordinates | null>(null);
   const filterAnim = useRef(new Animated.Value(CLOSED_FILTERS)).current;
@@ -60,20 +63,6 @@ export function WebGallery() {
 
   const closeModal = useCallback(() => setModalCoords(null), []);
 
-  const pictureImages = useMemo(
-    () => items.map(({urls, id}) => ({url: urls.full, id})) as ImageList,
-    [items],
-  );
-
-  const setCurrentImage = useCallback(
-    (index?: number) => {
-      if (index === undefined) return;
-      const current = items.find(({id}) => id === pictureImages[index].id);
-      if (current) dispatch(addCurrentImage(current));
-    },
-    [dispatch, items, pictureImages],
-  );
-
   if (items.length > 0) {
     return (
       <>
@@ -96,19 +85,20 @@ export function WebGallery() {
           onPress={isOpenFilters ? handleCloseFilters : handleOpenFilters}>
           <Pagination icon={isOpenFilters ? 'close' : 'play-arrow'} />
         </TouchableHighlight>
-        <Filters height={filterAnim} onSubmit={handleCloseFilters} />
+        <FlingGestureHandler
+          direction={Directions.DOWN}
+          onHandlerStateChange={({nativeEvent}) => {
+            if (nativeEvent.state === State.ACTIVE) handleCloseFilters();
+          }}>
+          <View>
+            <Filters height={filterAnim} onSubmit={handleCloseFilters} />
+          </View>
+        </FlingGestureHandler>
         {isShowModal && (
           <ImageModal
             image={currentImage}
             coords={modalCoords}
             closeModal={closeModal}
-          />
-        )}
-        {currentImage && isShowCurrent && (
-          <Picture
-            image={currentImage}
-            imageList={pictureImages}
-            addCurrentPicture={setCurrentImage}
           />
         )}
       </>

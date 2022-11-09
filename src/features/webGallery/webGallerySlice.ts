@@ -202,7 +202,7 @@ const initialState: WebGalleryState = {
   total: null,
   total_pages: null,
   currentImage: null,
-  isShowCurrent: false,
+  // isShowCurrent: false,
   liked: [],
   fetchParams: {
     page: 1,
@@ -224,13 +224,13 @@ export const webGallerySlice = createSlice({
     ) {
       state.currentImage = action.payload;
     },
-    toggleIsShowCurrent(state, action: PayloadAction<boolean | undefined>) {
-      if (action.payload === undefined) {
-        state.isShowCurrent = !state.isShowCurrent;
-      } else {
-        state.isShowCurrent = action.payload;
-      }
-    },
+    // toggleIsShowCurrent(state, action: PayloadAction<boolean | undefined>) {
+    //   if (action.payload === undefined) {
+    //     state.isShowCurrent = !state.isShowCurrent;
+    //   } else {
+    //     state.isShowCurrent = action.payload;
+    //   }
+    // },
     addFavoriteImage(state, {payload}: PayloadAction<string>) {
       const index = state.liked.indexOf(payload);
       if (index === -1) {
