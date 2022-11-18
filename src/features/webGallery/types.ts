@@ -23,6 +23,7 @@ export interface WebGalleryItem {
   links: Record<WebImageLinks, string>;
   likes: number;
   tags: Array<{type: string; title: string}>;
+  user: Record<string, any>;
 }
 
 export interface WebGalleryResponse {
@@ -43,7 +44,7 @@ export interface WebGalleryFetchParams {
 export interface WebGalleryState {
   items: WebGalleryItem[];
   status: SliceStatus;
-  error: null | string;
+  error: string;
   total: null | number;
   total_pages: null | number;
   currentImage: WebGalleryItem | null;

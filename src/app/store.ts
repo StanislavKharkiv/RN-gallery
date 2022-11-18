@@ -1,9 +1,11 @@
 import {configureStore} from '@reduxjs/toolkit';
 import webGalleryReducer from '../features/webGallery/webGallerySlice';
+import userSliceReducer from '../features/user/userSlice';
 
 export const store = configureStore({
   reducer: {
     webGallery: webGalleryReducer,
+    users: userSliceReducer,
   },
 });
 

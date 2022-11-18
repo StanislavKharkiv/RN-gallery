@@ -1,9 +1,14 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import {Link} from '@react-navigation/native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {addFavoriteImage} from '../features/webGallery/webGallerySlice';
+import {useAppDispatch} from '../app/hooks';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {WebGalleryItem} from '../features/webGallery/types';
 import {DownloadImage} from './DownloadImage';
 import {COLORS} from '../utils';
+import {routes} from '../routes';
 
 interface PictureInfoProps {
   image: WebGalleryItem;
@@ -12,7 +17,9 @@ interface PictureInfoProps {
 const ICON_SIZE = 20;
 
 export function PictureInfo({image, dark = false}: PictureInfoProps) {
+  const dispatch = useAppDispatch();
   const textColor = dark ? styles.darkText : styles.lightText;
+
   return (
     <View style={styles.imageInfo}>
       {image.description && <Text style={textColor}>{image.description}</Text>}
@@ -23,15 +30,22 @@ export function PictureInfo({image, dark = false}: PictureInfoProps) {
         <Text style={textColor}>width: {image.width}</Text>
         <Text style={textColor}>height: {image.height}</Text>
       </View>
+      <Link to={{screen: routes.user, params: {username: image.user.username}}}>
+        <Text style={textColor}>
+          Author: <Text style={styles.author}>{image.user.username}</Text>
+        </Text>
+      </Link>
       <View style={styles.row}>
-        <View style={styles.like}>
-          <Icon
-            name="thumb-up-off-alt"
-            size={ICON_SIZE}
-            color={COLORS.secondary}
-          />
-          <Text style={textColor}> {image.likes}</Text>
-        </View>
+        <TouchableOpacity onPress={() => dispatch(addFavoriteImage(image.id))}>
+          <View style={styles.like}>
+            <Icon
+              name="thumb-up-off-alt"
+              size={ICON_SIZE}
+              color={COLORS.secondary}
+            />
+            <Text style={textColor}> {image.likes}</Text>
+          </View>
+        </TouchableOpacity>
         <DownloadImage url={image.links.download}>
           <View style={styles.download}>
             <Icon
@@ -74,5 +88,10 @@ const styles = StyleSheet.create({
   },
   darkText: {
     color: 'black',
+  },
+  author: {
+    textDecorationStyle: 'solid',
+    textDecorationLine: 'underline',
+    color: COLORS.secondary,
   },
 });

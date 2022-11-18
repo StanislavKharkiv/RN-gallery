@@ -1,7 +1,7 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {RootState} from '../../app/store';
 import {WebGalleryResponse, WebGalleryFetchParams} from './types';
-import {UNSPLASH_CLIENT_ID} from '@env';
+import {API} from '../../constants';
 
 interface Response {
   response: WebGalleryResponse;
@@ -18,9 +18,8 @@ export const fetchWebGallery = createAsyncThunk<
   const queryParams = {...fetchParams, ...params};
 
   const response = await fetch(
-    `https://api.unsplash.com/search/photos?client_id=${UNSPLASH_CLIENT_ID}&page=${queryParams.page}&query=${queryParams.category}&per_page=${queryParams.per_page}&order_by=${queryParams.order_by}&stats=${queryParams.stats}&orientation=${queryParams.orientation}`,
+    `${API.photos}&page=${queryParams.page}&query=${queryParams.category}&per_page=${queryParams.per_page}&order_by=${queryParams.order_by}&stats=${queryParams.stats}&orientation=${queryParams.orientation}`,
   );
-
-  const result = {response: await response.json(), params: queryParams};
-  return result;
+  const images = await response.json();
+  return {response: images, params: queryParams};
 });

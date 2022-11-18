@@ -25,13 +25,8 @@ interface DownloadImageProps {
 export function DownloadImage(props: DownloadImageProps) {
   const {url, children} = props;
 
-  const onTouch = (e: GestureResponderEvent) => {
-    e.stopPropagation();
-    console.log('losd');
-    RNFetchBlob.config({
-      fileCache: true,
-      appendExt: 'jpg',
-    })
+  const onTouch = () => {
+    RNFetchBlob.config({fileCache: true, appendExt: 'jpg'})
       .fetch('GET', url)
       .then(async image => {
         const hasPermission = await hasAndroidPermission();

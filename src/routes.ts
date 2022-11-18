@@ -1,4 +1,5 @@
 export const routes = {
   unsplash: 'unsplash',
-  local: 'local',
+  slider: 'slider',
+  user: 'user',
 };

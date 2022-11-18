@@ -12,7 +12,9 @@ import {routes} from '../routes';
 import {useLinkTo} from '@react-navigation/native';
 
 export function PictureSlider() {
-  const {currentImage, items} = useAppSelector(state => state.webGallery);
+  const {currentImage, items, liked} = useAppSelector(
+    state => state.webGallery,
+  );
   const dispatch = useAppDispatch();
   const linkTo = useLinkTo();
   const [isShowInfo, setIsShowInfo] = useState(true);
@@ -37,6 +39,8 @@ export function PictureSlider() {
 
   const handleClosePicture = () => linkTo(`/${routes.unsplash}`);
 
+  const isLiked = liked.some(item => item === currentImage?.id);
+
   return (
     <View style={styles.wrapper}>
       <TapGestureHandler onEnded={() => setIsShowInfo(!isShowInfo)}>
@@ -52,6 +56,14 @@ export function PictureSlider() {
         <View style={styles.imageInfo}>
           <PictureInfo image={currentImage!} />
         </View>
+      )}
+      {isLiked && (
+        <Icon
+          style={styles.like}
+          name="favorite"
+          size={30}
+          color="rgba(255, 0, 0, .6)"
+        />
       )}
       <TouchableOpacity onPress={handleClosePicture} style={styles.close}>
         <Icon name="close" size={30} color="red" />
@@ -79,5 +91,10 @@ const styles = StyleSheet.create({
     top: 10,
     backgroundColor: 'white',
     borderRadius: 50,
+  },
+  like: {
+    position: 'absolute',
+    left: 10,
+    top: 10,
   },
 });

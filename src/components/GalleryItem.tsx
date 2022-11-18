@@ -40,7 +40,7 @@ export function GalleryItem(props: GalleryItemProps) {
   const singleTap = Gesture.Tap().onEnd((_event, success) => {
     if (success) {
       dispatch(addCurrentImage(props.item));
-      linkTo(`/${routes.local}`);
+      linkTo(`/${routes.slider}`);
     }
   });
   const doubleTap = Gesture.Tap()

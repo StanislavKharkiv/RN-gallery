@@ -23,6 +23,7 @@ import {Filters} from './components/Filters';
 import {ImageModal} from '../../components/ImageModal';
 import {Loader} from '../../components/Loader';
 import {Coordinates} from '../../types';
+import {Plug} from '../../components/Plug';
 
 const CLOSED_FILTERS = 0;
 const FILTER_HEIGHT = 340;
@@ -30,9 +31,8 @@ const FILTER_HEIGHT = 340;
 export function WebGallery() {
   const {isInternetReachable} = useNetInfo();
   const dispatch = useAppDispatch();
-  const {items, status, fetchParams, currentImage, liked} = useAppSelector(
-    state => state.webGallery,
-  );
+  const {items, status, fetchParams, currentImage, liked, error} =
+    useAppSelector(state => state.webGallery);
   const [isOpenFilters, setIsOpenFilters] = useState(false);
   const [modalCoords, setModalCoords] = useState<Coordinates | null>(null);
   const filterAnim = useRef(new Animated.Value(CLOSED_FILTERS)).current;
@@ -62,6 +62,8 @@ export function WebGallery() {
   }, [isInternetReachable]);
 
   const closeModal = useCallback(() => setModalCoords(null), []);
+
+  if (status === 'failed') return <Plug text={error} />;
 
   if (items.length > 0) {
     return (
