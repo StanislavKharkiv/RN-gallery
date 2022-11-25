@@ -1,27 +1,27 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {ImageList} from '../features/webGallery/types';
-import {useAppDispatch, useAppSelector} from '../app/hooks';
-import {addCurrentImage} from '../features/webGallery/webGallerySlice';
+import {ImageList, ScreenNavigationProp} from '../../types';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {setCurrentImage} from '../imageViewer';
 import {TapGestureHandler} from 'react-native-gesture-handler';
-import {PictureInfo} from './PictureInfo';
-import {Loader} from './Loader';
+import {PictureInfo} from '../../components/PictureInfo';
+import {Loader} from '../../components/Loader';
 import ImageViewer from 'react-native-image-zoom-viewer';
-import {routes} from '../routes';
-import {useLinkTo} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import {routes} from '../../routes';
 
-export function PictureSlider() {
-  const {currentImage, items, liked} = useAppSelector(
-    state => state.webGallery,
+export function ImageSlider() {
+  const {currentImage, images, liked} = useAppSelector(
+    state => state.imageViewer,
   );
   const dispatch = useAppDispatch();
-  const linkTo = useLinkTo();
+  const navigation = useNavigation<ScreenNavigationProp<routes.slider>>();
   const [isShowInfo, setIsShowInfo] = useState(true);
 
   const pictureList = useMemo(
-    () => items.map(({urls, id}) => ({url: urls.full, id})) as ImageList,
-    [items],
+    () => images.map(({urls, id}) => ({url: urls.full, id})) as ImageList,
+    [images],
   );
 
   const imageIndex = useMemo(
@@ -29,15 +29,15 @@ export function PictureSlider() {
     [pictureList, currentImage],
   );
 
-  const setCurrentImage = useCallback(
+  const addCurrentImage = useCallback(
     (index?: number) => {
-      const current = items.find(({id}) => id === pictureList[index!].id);
-      if (current) dispatch(addCurrentImage(current));
+      const current = images.find(({id}) => id === pictureList[index!].id);
+      if (current) dispatch(setCurrentImage(current));
     },
-    [dispatch, items, pictureList],
+    [dispatch, images, pictureList],
   );
 
-  const handleClosePicture = () => linkTo(`/${routes.unsplash}`);
+  const handleClosePicture = () => navigation.goBack();
 
   const isLiked = liked.some(item => item === currentImage?.id);
 
@@ -49,7 +49,7 @@ export function PictureSlider() {
           loadingRender={() => <Loader />}
           onClick={() => setIsShowInfo(!isShowInfo)}
           index={imageIndex}
-          onChange={setCurrentImage}
+          onChange={addCurrentImage}
         />
       </TapGestureHandler>
       {isShowInfo && (

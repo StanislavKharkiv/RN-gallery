@@ -8,46 +8,47 @@ import {
   ToastAndroid,
 } from 'react-native';
 import {STYLE} from '../constants';
-import {WebGalleryItem} from '../features/webGallery/types';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {NavigationProps, Photo, RootStackParamList} from '../types';
 import {useAppDispatch} from '../app/hooks';
 import {cutText} from '../helpers';
-import {
-  addCurrentImage,
-  addFavoriteImage,
-} from '../features/webGallery/webGallerySlice';
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {Coordinates} from '../types';
 import {COLORS} from '../utils';
-import {useLinkTo} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {routes} from '../routes';
+import {
+  setCurrentImage,
+  setModalCoords,
+  setFavoriteImage,
+} from '../features/imageViewer';
 
 const win = Dimensions.get('window');
 interface GalleryItemProps {
-  item: WebGalleryItem;
+  item: Photo;
   liked?: boolean;
-  setCoords: (coords: Coordinates) => void;
   isActive?: boolean;
 }
+
 export function GalleryItem(props: GalleryItemProps) {
   const {description, alt_description, urls, id} = props.item;
-  const {liked, setCoords, isActive = false} = props;
+  const {liked, isActive = false} = props;
   const dispatch = useAppDispatch();
-  const linkTo = useLinkTo();
+  const navigation = useNavigation<NavigationProps>();
   const imageDescription = description ?? alt_description;
   const toastText = liked ? 'Removed from favorite' : 'Added to favorite';
 
   const singleTap = Gesture.Tap().onEnd((_event, success) => {
     if (success) {
-      dispatch(addCurrentImage(props.item));
-      linkTo(`/${routes.slider}`);
+      dispatch(setCurrentImage(props.item));
+      navigation.push(routes.slider);
     }
   });
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd((_event, success) => {
       if (success) {
-        dispatch(addFavoriteImage(id));
+        dispatch(setFavoriteImage(id));
         ToastAndroid.show(toastText, ToastAndroid.SHORT);
       }
     });
@@ -55,11 +56,13 @@ export function GalleryItem(props: GalleryItemProps) {
     .minDuration(600)
     .onEnd((event, success) => {
       if (success) {
-        dispatch(addCurrentImage(props.item));
-        setCoords({
-          x: event.absoluteX as number,
-          y: event.absoluteY as number,
-        });
+        dispatch(setCurrentImage(props.item));
+        dispatch(
+          setModalCoords({
+            x: event.absoluteX as number,
+            y: event.absoluteY as number,
+          }),
+        );
       }
     });
 

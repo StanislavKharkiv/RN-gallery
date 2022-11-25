@@ -7,7 +7,7 @@ import {
   ToastAndroid,
 } from 'react-native';
 import {useAppSelector, useAppDispatch} from '../../../app/hooks';
-import {fetchWebGallery} from '../webGalleryThunk';
+import {fetchImages} from '../webGalleryThunk';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {CONNECT_ERROR, STYLE} from '../../../constants';
 import {useNetInfo} from '@react-native-community/netinfo';
@@ -29,13 +29,13 @@ export function Pagination({icon}: {icon: string}) {
   const handlePrevPage = () => {
     onChangePage(() => {
       if (page <= 1) return;
-      dispatch(fetchWebGallery({page: page - 1}));
+      dispatch(fetchImages({page: page - 1}));
     });
   };
   const handleNextPage = () => {
     onChangePage(() => {
       if (total_pages && page >= total_pages) return;
-      dispatch(fetchWebGallery({page: page + 1}));
+      dispatch(fetchImages({page: page + 1}));
     });
   };
 

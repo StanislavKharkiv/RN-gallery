@@ -1,12 +1,12 @@
 import React from 'react';
 import {View, StyleSheet, Dimensions} from 'react-native';
 import {PictureInfo} from './PictureInfo';
-import {WebGalleryItem} from '../features/webGallery/types';
+import {Photo} from '../types';
 import {Coordinates} from '../types';
 import {TapGestureHandler} from 'react-native-gesture-handler';
 
 interface ImageModalProps {
-  image: WebGalleryItem;
+  image: Photo;
   coords: Coordinates;
   closeModal: () => void;
 }

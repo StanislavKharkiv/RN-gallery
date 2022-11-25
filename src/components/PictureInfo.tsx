@@ -2,16 +2,16 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {Link} from '@react-navigation/native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {addFavoriteImage} from '../features/webGallery/webGallerySlice';
 import {useAppDispatch} from '../app/hooks';
+import {setFavoriteImage} from '../features/imageViewer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {WebGalleryItem} from '../features/webGallery/types';
+import {Photo} from '../types';
 import {DownloadImage} from './DownloadImage';
 import {COLORS} from '../utils';
 import {routes} from '../routes';
 
 interface PictureInfoProps {
-  image: WebGalleryItem;
+  image: Photo;
   dark?: boolean;
 }
 const ICON_SIZE = 20;
@@ -36,7 +36,7 @@ export function PictureInfo({image, dark = false}: PictureInfoProps) {
         </Text>
       </Link>
       <View style={styles.row}>
-        <TouchableOpacity onPress={() => dispatch(addFavoriteImage(image.id))}>
+        <TouchableOpacity onPress={() => dispatch(setFavoriteImage(image.id))}>
           <View style={styles.like}>
             <Icon
               name="thumb-up-off-alt"

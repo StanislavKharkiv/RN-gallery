@@ -16,14 +16,15 @@ import {
 } from 'react-native-gesture-handler';
 import {CONNECT_ERROR} from '../../constants';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {fetchWebGallery} from './webGalleryThunk';
+import {fetchImages} from './webGalleryThunk';
 import {GalleryItem} from '../../components/GalleryItem';
 import {Pagination} from './components/Pagination';
 import {Filters} from './components/Filters';
 import {ImageModal} from '../../components/ImageModal';
 import {Loader} from '../../components/Loader';
-import {Coordinates} from '../../types';
 import {Plug} from '../../components/Plug';
+import {setImages, setModalCoords} from '../imageViewer';
+import {useFocusEffect} from '@react-navigation/native';
 
 const CLOSED_FILTERS = 0;
 const FILTER_HEIGHT = 340;
@@ -31,12 +32,35 @@ const FILTER_HEIGHT = 340;
 export function WebGallery() {
   const {isInternetReachable} = useNetInfo();
   const dispatch = useAppDispatch();
-  const {items, status, fetchParams, currentImage, liked, error} =
-    useAppSelector(state => state.webGallery);
+  const {items, status, fetchParams, error} = useAppSelector(
+    state => state.webGallery,
+  );
+  const {modalCoords, currentImage, liked} = useAppSelector(
+    state => state.imageViewer,
+  );
   const [isOpenFilters, setIsOpenFilters] = useState(false);
-  const [modalCoords, setModalCoords] = useState<Coordinates | null>(null);
   const filterAnim = useRef(new Animated.Value(CLOSED_FILTERS)).current;
   const isShowModal = currentImage && modalCoords;
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(setImages(items));
+    }, [items, dispatch]),
+  );
+
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchImages(fetchParams));
+    }
+  }, [dispatch, status, fetchParams, items]);
+
+  useEffect(() => {
+    if (isInternetReachable === false) ToastAndroid.show(CONNECT_ERROR, 1);
+    if (isInternetReachable && items.length === 0) {
+      dispatch(fetchImages(fetchParams));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isInternetReachable]);
 
   const handleOpenFilters = () => {
     setIsOpenFilters(true);
@@ -46,22 +70,10 @@ export function WebGallery() {
     setIsOpenFilters(false);
     startAnimation(filterAnim, CLOSED_FILTERS);
   };
-
-  useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchWebGallery(fetchParams));
-    }
-  }, [dispatch, status, fetchParams]);
-
-  useEffect(() => {
-    if (isInternetReachable === false) ToastAndroid.show(CONNECT_ERROR, 1);
-    if (isInternetReachable && items.length === 0) {
-      dispatch(fetchWebGallery(fetchParams));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isInternetReachable]);
-
-  const closeModal = useCallback(() => setModalCoords(null), []);
+  const closeModal = useCallback(
+    () => dispatch(setModalCoords(null)),
+    [dispatch],
+  );
 
   if (status === 'failed') return <Plug text={error} />;
 
@@ -76,7 +88,6 @@ export function WebGallery() {
                   item={item}
                   key={item.id}
                   liked={liked.some(id => id === item.id)}
-                  setCoords={setModalCoords}
                   isActive={!!isShowModal && currentImage?.id === item.id}
                 />
               ))}

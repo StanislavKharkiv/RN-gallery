@@ -1,6 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import {View, StyleSheet, Animated} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {COLORS} from '../utils';
 
 export function Loader() {
   const rotationAnim = useRef(new Animated.Value(0)).current;
@@ -23,7 +24,7 @@ export function Loader() {
   return (
     <View style={styles.loader}>
       <Animated.View style={{transform: [{rotate: rotation}]}}>
-        <Icon name="loop" size={60} color="black" />
+        <Icon name="loop" size={70} color={COLORS.secondary} />
       </Animated.View>
     </View>
   );
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
     padding: 30,
   },
 });

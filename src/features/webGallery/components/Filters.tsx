@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, TextInput, Button, Animated, View} from 'react-native';
 import {Select} from '../../../components/Select';
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
-import {fetchWebGallery} from '../webGalleryThunk';
+import {fetchImages} from '../webGalleryThunk';
 import {WebGalleryFetchParams} from '../types';
 import {COLORS} from '../../../utils';
 
@@ -38,7 +38,7 @@ export function Filters({height, onSubmit}: FiltersProps) {
   });
 
   const handleFilterSubmit = () => {
-    dispatch(fetchWebGallery(filter));
+    dispatch(fetchImages(filter));
     onSubmit?.();
   };
 

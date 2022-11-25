@@ -1,5 +1,5 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {fetchWebGallery} from './webGalleryThunk';
+import {createSlice} from '@reduxjs/toolkit';
+import {fetchImages} from './webGalleryThunk';
 import {WebGalleryState} from './types';
 import {RESP_ERROR} from '../../constants';
 
@@ -9,9 +9,6 @@ const initialState: WebGalleryState = {
   error: '',
   total: null,
   total_pages: null,
-  currentImage: null,
-  // isShowCurrent: false,
-  liked: [],
   fetchParams: {
     page: 1,
     per_page: 20,
@@ -25,32 +22,10 @@ const initialState: WebGalleryState = {
 export const webGallerySlice = createSlice({
   name: 'webGallery',
   initialState,
-  reducers: {
-    addCurrentImage(
-      state,
-      action: PayloadAction<WebGalleryState['currentImage']>,
-    ) {
-      state.currentImage = action.payload;
-    },
-    // toggleIsShowCurrent(state, action: PayloadAction<boolean | undefined>) {
-    //   if (action.payload === undefined) {
-    //     state.isShowCurrent = !state.isShowCurrent;
-    //   } else {
-    //     state.isShowCurrent = action.payload;
-    //   }
-    // },
-    addFavoriteImage(state, {payload}: PayloadAction<string>) {
-      const index = state.liked.indexOf(payload);
-      if (index === -1) {
-        state.liked.push(payload);
-      } else {
-        state.liked.splice(index, 1);
-      }
-    },
-  },
+  reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(fetchWebGallery.fulfilled, (state, action) => {
+      .addCase(fetchImages.fulfilled, (state, action) => {
         const {response, params} = action.payload;
         state.status = 'succeeded';
         state.items = response.results;
@@ -58,15 +33,22 @@ export const webGallerySlice = createSlice({
         state.total_pages = response.total_pages;
         state.fetchParams = params;
       })
-      .addCase(fetchWebGallery.pending, state => {
+      .addCase(fetchImages.pending, state => {
         state.status = 'pending';
       })
-      .addCase(fetchWebGallery.rejected, (state, action) => {
+      .addCase(fetchImages.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message ?? RESP_ERROR;
       });
   },
 });
 
+// function setPending(state: WebGalleryState) {
+//   state.status = 'pending';
+// }
+// function setError(state: WebGalleryState, action: {error: SerializedError}) {
+//   state.status = 'failed';
+//   state.error = action.error.message ?? RESP_ERROR;
+// }
+
 export default webGallerySlice.reducer;
-export const {addCurrentImage, addFavoriteImage} = webGallerySlice.actions;

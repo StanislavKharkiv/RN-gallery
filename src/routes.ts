@@ -1,5 +1,5 @@
-export const routes = {
-  unsplash: 'unsplash',
-  slider: 'slider',
-  user: 'user',
-};
+export enum routes {
+  unsplash = 'unsplash',
+  slider = 'slider',
+  user = 'user',
+}
