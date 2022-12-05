@@ -1,19 +1,12 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  Animated,
-  TouchableHighlight,
-  ToastAndroid,
-} from 'react-native';
+import {View, Animated, TouchableHighlight, ToastAndroid} from 'react-native';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {
   Directions,
   FlingGestureHandler,
   State,
 } from 'react-native-gesture-handler';
+import {useFocusEffect} from '@react-navigation/native';
 import {CONNECT_ERROR} from '../../constants';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {fetchImages} from './webGalleryThunk';
@@ -24,7 +17,7 @@ import {ImageModal} from '../../components/ImageModal';
 import {Loader} from '../../components/Loader';
 import {Plug} from '../../components/Plug';
 import {setImages, setModalCoords} from '../imageViewer';
-import {useFocusEffect} from '@react-navigation/native';
+import {GalleryWrapper} from '../../components/GalleryWrapper';
 
 const CLOSED_FILTERS = 0;
 const FILTER_HEIGHT = 340;
@@ -80,20 +73,16 @@ export function WebGallery() {
   if (items.length > 0) {
     return (
       <>
-        <SafeAreaView style={styles.wrapper}>
-          <ScrollView>
-            <View style={styles.gallery}>
-              {items.map(item => (
-                <GalleryItem
-                  item={item}
-                  key={item.id}
-                  liked={liked.some(id => id === item.id)}
-                  isActive={!!isShowModal && currentImage?.id === item.id}
-                />
-              ))}
-            </View>
-          </ScrollView>
-        </SafeAreaView>
+        <GalleryWrapper>
+          {items.map(item => (
+            <GalleryItem
+              item={item}
+              key={item.id}
+              liked={liked.some(id => id === item.id)}
+              isActive={!!isShowModal && currentImage?.id === item.id}
+            />
+          ))}
+        </GalleryWrapper>
         <TouchableHighlight
           onPress={isOpenFilters ? handleCloseFilters : handleOpenFilters}>
           <Pagination icon={isOpenFilters ? 'close' : 'play-arrow'} />
@@ -128,15 +117,3 @@ function startAnimation(animation: Animated.Value, value: number) {
     useNativeDriver: false,
   }).start();
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-  },
-  gallery: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-  },
-});

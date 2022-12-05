@@ -1,15 +1,13 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
-  View,
-  Image,
   Text,
   StyleSheet,
   Dimensions,
   ToastAndroid,
+  Animated,
 } from 'react-native';
 import {STYLE} from '../constants';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {NavigationProps, Photo, RootStackParamList} from '../types';
+import {NavigationProps, Photo} from '../types';
 import {useAppDispatch} from '../app/hooks';
 import {cutText} from '../helpers';
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
@@ -24,19 +22,43 @@ import {
 } from '../features/imageViewer';
 
 const win = Dimensions.get('window');
+const itemBorder = 1;
+const itemMargin = 8;
+
 interface GalleryItemProps {
   item: Photo;
   liked?: boolean;
   isActive?: boolean;
+  size?: number;
 }
 
 export function GalleryItem(props: GalleryItemProps) {
   const {description, alt_description, urls, id} = props.item;
-  const {liked, isActive = false} = props;
+  const {liked, isActive = false, size = 2} = props;
   const dispatch = useAppDispatch();
   const navigation = useNavigation<NavigationProps>();
   const imageDescription = description ?? alt_description;
   const toastText = liked ? 'Removed from favorite' : 'Added to favorite';
+  // image and image wrapper size
+  const imgWrapSize = win.width / size - itemMargin * 2;
+  const imgSize = imgWrapSize - itemBorder * size;
+  const imageWrapSizeAnim = useRef(new Animated.Value(imgWrapSize)).current;
+  const imgSizeAnim = useRef(new Animated.Value(imgSize)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(imgSizeAnim, {
+        toValue: imgSize,
+        duration: 400,
+        useNativeDriver: false,
+      }),
+      Animated.timing(imageWrapSizeAnim, {
+        toValue: imgWrapSize,
+        duration: 400,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }, [imageWrapSizeAnim, imgWrapSize, imgSize, imgSizeAnim]);
 
   const singleTap = Gesture.Tap().onEnd((_event, success) => {
     if (success) {
@@ -68,16 +90,23 @@ export function GalleryItem(props: GalleryItemProps) {
 
   const taps = Gesture.Exclusive(doubleTap, singleTap, longTap);
 
+  const imgStyle = {
+    width: imgSizeAnim,
+    height: imgSizeAnim,
+    marginBottom: 5,
+  };
+
   return (
     <GestureDetector gesture={taps}>
-      <View
+      <Animated.View
         style={[
           styles.galleryItem,
           styles.shadowProp,
           isActive && styles.active,
+          {width: imageWrapSizeAnim},
         ]}
         key={id}>
-        <Image source={{uri: urls.small}} style={styles.img} />
+        <Animated.Image source={{uri: urls.small}} style={imgStyle} />
         {imageDescription && (
           <Text style={styles.imgDescription}>{cutText(imageDescription)}</Text>
         )}
@@ -89,26 +118,17 @@ export function GalleryItem(props: GalleryItemProps) {
             color="rgba(255, 0, 0, .5)"
           />
         )}
-      </View>
+      </Animated.View>
     </GestureDetector>
   );
 }
-const itemBorder = 1;
-const itemMargin = 8;
-const imgSize = win.width / 2 - itemMargin * 2 - itemBorder * 2;
 
 const styles = StyleSheet.create({
   galleryItem: {
     margin: itemMargin,
-    width: imgSize + itemBorder * 2,
     backgroundColor: '#fff',
     borderWidth: itemBorder,
     borderColor: 'transparent',
-  },
-  img: {
-    width: imgSize,
-    height: imgSize,
-    marginBottom: 5,
   },
   imgDescription: {
     paddingHorizontal: 5,
