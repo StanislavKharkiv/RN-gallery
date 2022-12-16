@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     height: 40,
     padding: 10,
+    color: 'black',
   },
   select: {
     marginVertical: 6,

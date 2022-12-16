@@ -28,7 +28,10 @@ export const webGallerySlice = createSlice({
       .addCase(fetchImages.fulfilled, (state, action) => {
         const {response, params} = action.payload;
         state.status = 'succeeded';
-        state.items = response.results;
+        state.items = response.results.map(img => ({
+          ...img,
+          url: img.urls.full,
+        }));
         state.total = response.total;
         state.total_pages = response.total_pages;
         state.fetchParams = params;

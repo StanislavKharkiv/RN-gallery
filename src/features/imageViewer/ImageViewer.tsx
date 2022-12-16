@@ -20,7 +20,7 @@ export function ImageSlider() {
   const [isShowInfo, setIsShowInfo] = useState(true);
 
   const pictureList = useMemo(
-    () => images.map(({urls, id}) => ({url: urls.full, id})) as ImageList,
+    () => images.map(({id, url}) => ({url, id})) as ImageList,
     [images],
   );
 

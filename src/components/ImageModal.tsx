@@ -1,12 +1,12 @@
 import React from 'react';
 import {View, StyleSheet, Dimensions} from 'react-native';
 import {PictureInfo} from './PictureInfo';
-import {Photo} from '../types';
+import {ViewerPhoto} from '../types';
 import {Coordinates} from '../types';
 import {TapGestureHandler} from 'react-native-gesture-handler';
 
 interface ImageModalProps {
-  image: Photo;
+  image: ViewerPhoto;
   coords: Coordinates;
   closeModal: () => void;
 }

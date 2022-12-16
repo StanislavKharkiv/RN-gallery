@@ -7,7 +7,7 @@ import {
   Animated,
 } from 'react-native';
 import {STYLE} from '../constants';
-import {NavigationProps, Photo} from '../types';
+
 import {useAppDispatch} from '../app/hooks';
 import {cutText} from '../helpers';
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
@@ -15,6 +15,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {COLORS} from '../utils';
 import {useNavigation} from '@react-navigation/native';
 import {routes} from '../routes';
+import {NavigationProps} from '../types';
+import {GalleryPhoto} from '../features/webGallery/types';
 import {
   setCurrentImage,
   setModalCoords,
@@ -26,7 +28,7 @@ const itemBorder = 1;
 const itemMargin = 8;
 
 interface GalleryItemProps {
-  item: Photo;
+  item: GalleryPhoto;
   liked?: boolean;
   isActive?: boolean;
   size?: number;

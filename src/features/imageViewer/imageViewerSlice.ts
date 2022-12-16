@@ -1,11 +1,11 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {Coordinates, Photo} from '../../types';
+import {Coordinates, ViewerPhoto} from '../../types';
 
 interface InitialState {
-  currentImage: Photo | null;
+  currentImage: ViewerPhoto | null;
   liked: string[];
   modalCoords: null | Coordinates;
-  images: Photo[];
+  images: ViewerPhoto[];
 }
 const initialState: InitialState = {
   currentImage: null,
@@ -18,13 +18,13 @@ const imageViewerSlice = createSlice({
   name: 'imageViewerSlice',
   initialState: initialState,
   reducers: {
-    setCurrentImage(state, action: PayloadAction<Photo | null>) {
+    setCurrentImage(state, action: PayloadAction<ViewerPhoto | null>) {
       state.currentImage = action.payload;
     },
     setModalCoords(state, action: PayloadAction<InitialState['modalCoords']>) {
       state.modalCoords = action.payload;
     },
-    setImages(state, action: PayloadAction<Photo[]>) {
+    setImages(state, action: PayloadAction<ViewerPhoto[]>) {
       state.images = action.payload;
     },
     setFavoriteImage(state, {payload}: PayloadAction<string>) {

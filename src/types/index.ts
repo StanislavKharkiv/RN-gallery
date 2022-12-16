@@ -30,10 +30,16 @@ export interface Photo {
   user: Record<string, any>;
 }
 
+export interface ViewerPhoto extends Partial<Photo> {
+  id: string;
+  url: string;
+}
+
 export type RootStackParamList = {
   [routes.unsplash]: {username: string};
   [routes.slider]: undefined;
   [routes.user]: {username: string};
+  [routes.local]: undefined;
 };
 
 export type ScreenNavigationProp<T extends routes> = NativeStackNavigationProp<

@@ -1,21 +1,8 @@
 import React, {ReactNode} from 'react';
-import {
-  GestureResponderEvent,
-  PermissionsAndroid,
-  Platform,
-  ToastAndroid,
-  TouchableOpacity,
-} from 'react-native';
+import {Platform, ToastAndroid, TouchableOpacity} from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
-
-async function hasAndroidPermission() {
-  const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
-  const hasPermission = await PermissionsAndroid.check(permission);
-  if (hasPermission) return true;
-  const status = await PermissionsAndroid.request(permission);
-  return status === 'granted';
-}
+import {hasAndroidPermission} from '../helpers';
 
 interface DownloadImageProps {
   children: ReactNode;
@@ -29,7 +16,7 @@ export function DownloadImage(props: DownloadImageProps) {
     RNFetchBlob.config({fileCache: true, appendExt: 'jpg'})
       .fetch('GET', url)
       .then(async image => {
-        const hasPermission = await hasAndroidPermission();
+        const hasPermission = await hasAndroidPermission('write');
         if (Platform.OS === 'android' && !hasPermission) return;
         CameraRoll.save(image.data, {type: 'photo'})
           .then(() => ToastAndroid.show('Image saved', 1))

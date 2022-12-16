@@ -13,6 +13,7 @@ import {ImageSlider} from './src/features/imageViewer';
 import {HeaderRight} from './src/components/HeaderRight';
 import {HeaderLeft} from './src/components/HeaderLeft';
 import {User} from './src/features/user/User';
+import {LocalGallery} from './src/features/localGallery/LocalGallery';
 import {routes} from './src/routes';
 import {COLORS} from './src/utils';
 import {RootStackParamList} from './src/types';
@@ -54,6 +55,15 @@ const App = () => {
               options={{
                 ...screenOptions,
                 title: 'User profile',
+                headerLeft: () => <HeaderLeft to={routes.unsplash} />,
+              }}
+            />
+            <Stack.Screen
+              name={routes.local}
+              component={LocalGallery}
+              options={{
+                ...screenOptions,
+                title: 'My images',
                 headerLeft: () => <HeaderLeft to={routes.unsplash} />,
               }}
             />

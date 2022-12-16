@@ -15,8 +15,12 @@ export interface WebGalleryFetchParams {
   orientation?: 'landscape' | 'portrait' | 'squarish';
 }
 
+export interface GalleryPhoto extends Photo {
+  url: string;
+}
+
 export interface WebGalleryState {
-  items: Photo[];
+  items: GalleryPhoto[];
   status: SliceStatus;
   error: string;
   total: null | number;

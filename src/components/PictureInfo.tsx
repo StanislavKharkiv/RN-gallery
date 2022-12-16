@@ -5,18 +5,19 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useAppDispatch} from '../app/hooks';
 import {setFavoriteImage} from '../features/imageViewer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {Photo} from '../types';
+import {ViewerPhoto} from '../types';
 import {DownloadImage} from './DownloadImage';
 import {COLORS} from '../utils';
 import {routes} from '../routes';
 
 interface PictureInfoProps {
-  image: Photo;
+  image: Omit<ViewerPhoto, 'url'>;
   dark?: boolean;
 }
 const ICON_SIZE = 20;
 
-export function PictureInfo({image, dark = false}: PictureInfoProps) {
+export function PictureInfo(props: PictureInfoProps) {
+  const {image, dark = false} = props;
   const dispatch = useAppDispatch();
   const textColor = dark ? styles.darkText : styles.lightText;
 
@@ -30,32 +31,38 @@ export function PictureInfo({image, dark = false}: PictureInfoProps) {
         <Text style={textColor}>width: {image.width}</Text>
         <Text style={textColor}>height: {image.height}</Text>
       </View>
-      <Link to={{screen: routes.user, params: {username: image.user.username}}}>
-        <Text style={textColor}>
-          Author: <Text style={styles.author}>{image.user.username}</Text>
-        </Text>
-      </Link>
-      <View style={styles.row}>
-        <TouchableOpacity onPress={() => dispatch(setFavoriteImage(image.id))}>
-          <View style={styles.like}>
-            <Icon
-              name="thumb-up-off-alt"
-              size={ICON_SIZE}
-              color={COLORS.secondary}
-            />
-            <Text style={textColor}> {image.likes}</Text>
-          </View>
-        </TouchableOpacity>
-        <DownloadImage url={image.links.download}>
-          <View style={styles.download}>
-            <Icon
-              name="file-download"
-              size={ICON_SIZE}
-              color={COLORS.secondary}
-            />
-          </View>
-        </DownloadImage>
-      </View>
+      {image.user && (
+        <Link
+          to={{screen: routes.user, params: {username: image.user.username}}}>
+          <Text style={textColor}>
+            Author: <Text style={styles.author}>{image.user.username}</Text>
+          </Text>
+        </Link>
+      )}
+      {image.user && (
+        <View style={styles.row}>
+          <TouchableOpacity
+            onPress={() => dispatch(setFavoriteImage(image.id))}>
+            <View style={styles.like}>
+              <Icon
+                name="thumb-up-off-alt"
+                size={ICON_SIZE}
+                color={COLORS.secondary}
+              />
+              <Text style={textColor}> {image.likes}</Text>
+            </View>
+          </TouchableOpacity>
+          <DownloadImage url={image.links!.download}>
+            <View style={styles.download}>
+              <Icon
+                name="file-download"
+                size={ICON_SIZE}
+                color={COLORS.secondary}
+              />
+            </View>
+          </DownloadImage>
+        </View>
+      )}
     </View>
   );
 }

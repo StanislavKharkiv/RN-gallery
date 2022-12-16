@@ -5,11 +5,12 @@ import {fetchUser, fetchUserImages} from './userThunk';
 import {Plug} from '../../components/Plug';
 import {Loader} from '../../components/Loader';
 import {Row} from './components/Row';
-import {RootStackParamList} from '../../types';
+import {RootStackParamList, ScreenNavigationProp} from '../../types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {routes} from '../../routes';
 import {Gallery} from './components/Gallery';
 import {Button} from '../../components/Button';
+import {useNavigation} from '@react-navigation/native';
 
 type UserProps = NativeStackScreenProps<
   RootStackParamList,
@@ -20,6 +21,7 @@ type UserProps = NativeStackScreenProps<
 export function User(props: UserProps) {
   const userName = props.route.params.username;
   const dispatch = useAppDispatch();
+  const navigation = useNavigation<ScreenNavigationProp<routes.user>>();
   const {user, error, status, photos} = useAppSelector(state => state.users);
   const {liked} = useAppSelector(state => state.imageViewer);
 
@@ -31,9 +33,8 @@ export function User(props: UserProps) {
     dispatch(fetchUser());
   }, [dispatch, userName]);
 
-  const onTouch = () => {
-    dispatch(fetchUserImages(userName));
-  };
+  const onTouchLoad = () => dispatch(fetchUserImages(userName));
+  const onTouchMyImages = () => navigation.navigate(routes.local);
 
   if (error) return <Plug text={error} />;
 
@@ -53,12 +54,17 @@ export function User(props: UserProps) {
         </View>
       </View>
       {!photos && user.total_photos > 0 && (
-        <Button text="get user photos" onTouch={onTouch} />
+        <Button text="get user photos" onTouch={onTouchLoad} />
       )}
       {photos && <Gallery photos={photos} likedPhotos={liked} />}
       {photos && photos.length < user.total_photos && (
         <View>
-          <Button text="load more" onTouch={onTouch} />
+          <Button text="load more" onTouch={onTouchLoad} />
+        </View>
+      )}
+      {!userName && (
+        <View>
+          <Button text="my images" onTouch={onTouchMyImages} />
         </View>
       )}
     </View>

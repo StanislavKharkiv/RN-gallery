@@ -1,8 +1,18 @@
 import React, {useState, ReactElement, Children, cloneElement} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
+  NativeScrollEvent,
+} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 
-export function GalleryWrapper(props: {children: ReactElement[]}) {
+interface GalleryWrapperProps {
+  children: ReactElement[];
+  onScroll?: (e: NativeScrollEvent) => void;
+}
+export function GalleryWrapper(props: GalleryWrapperProps) {
   const [imageSize, setImageSize] = useState(2);
   const pinchGesture = Gesture.Pinch().onUpdate(e => {
     if (e.scale > 1.2) {
@@ -16,7 +26,7 @@ export function GalleryWrapper(props: {children: ReactElement[]}) {
 
   return (
     <SafeAreaView style={styles.wrapper}>
-      <ScrollView>
+      <ScrollView onScroll={e => props.onScroll?.(e.nativeEvent)}>
         <GestureDetector gesture={pinchGesture}>
           <View style={styles.gallery}>
             {Children.map(props.children, child => {
