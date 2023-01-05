@@ -1,4 +1,6 @@
-import {PermissionsAndroid} from 'react-native';
+import {PermissionsAndroid, Platform, ToastAndroid} from 'react-native';
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+import {IMG_DIR} from '../constants';
 
 export function cutText(
   text: string,
@@ -18,4 +20,15 @@ export async function hasAndroidPermission(permType: 'write' | 'read') {
   if (hasPermission) return true;
   const status = await PermissionsAndroid.request(permission);
   return status === 'granted';
+}
+
+export async function savePhoto(image: string, cb?: () => void) {
+  const hasPermission = await hasAndroidPermission('write');
+  if (Platform.OS === 'android' && !hasPermission) return;
+  CameraRoll.save(image, {type: 'photo', album: IMG_DIR})
+    .then(() => {
+      cb?.();
+      ToastAndroid.show('Image saved', 1);
+    })
+    .catch(() => ToastAndroid.show('Image save error', 1));
 }

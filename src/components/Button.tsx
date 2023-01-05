@@ -10,23 +10,30 @@ import {COLORS} from '../utils';
 interface ButtonProps extends TouchableOpacityProps {
   onTouch: () => void;
   text: string;
+  variant?: 'primary' | 'warning' | 'error';
 }
 
 export function Button(props: ButtonProps) {
-  const {onTouch, text, disabled} = props;
+  const {onTouch, text, disabled, variant = 'primary'} = props;
+  const buttonStyles = {
+    primary: styles.primaryVariant,
+    warning: styles.warningVariant,
+    error: styles.errorVariant,
+  };
 
   return (
     <TouchableOpacity
-      style={styles.btn}
+      style={[styles.btn, buttonStyles[variant], props.style]}
       onPress={() => onTouch()}
       disabled={disabled}>
-      <Text style={styles.btnText}>{text}</Text>
+      <Text style={[styles.btnText, buttonStyles[variant]]}>{text}</Text>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   btn: {
+    justifyContent: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderWidth: 1,
@@ -39,6 +46,17 @@ const styles = StyleSheet.create({
   btnText: {
     textTransform: 'uppercase',
     textAlign: 'center',
+  },
+  primaryVariant: {
     color: 'black',
+    borderColor: COLORS.secondary,
+  },
+  warningVariant: {
+    color: COLORS.secondary,
+    borderColor: COLORS.secondary,
+  },
+  errorVariant: {
+    color: 'red',
+    borderColor: 'red',
   },
 });

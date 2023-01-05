@@ -13,7 +13,7 @@ import {ImageSlider} from './src/features/imageViewer';
 import {HeaderRight} from './src/components/HeaderRight';
 import {HeaderLeft} from './src/components/HeaderLeft';
 import {User} from './src/features/user/User';
-import {LocalGallery} from './src/features/localGallery/LocalGallery';
+import {LocalGallery} from './src/features/localGallery';
 import {routes} from './src/routes';
 import {COLORS} from './src/utils';
 import {RootStackParamList} from './src/types';
