@@ -69,10 +69,11 @@ export function WebGallery() {
   );
 
   if (status === 'failed') return <Plug text={error} />;
+  if (status === 'pending') return <Loader />;
 
-  if (items.length > 0) {
-    return (
-      <>
+  return (
+    <>
+      {items.length > 0 ? (
         <GalleryWrapper>
           {items.map(item => (
             <GalleryItem
@@ -83,31 +84,31 @@ export function WebGallery() {
             />
           ))}
         </GalleryWrapper>
-        <TouchableHighlight
-          onPress={isOpenFilters ? handleCloseFilters : handleOpenFilters}>
-          <Pagination icon={isOpenFilters ? 'close' : 'play-arrow'} />
-        </TouchableHighlight>
-        <FlingGestureHandler
-          direction={Directions.DOWN}
-          onHandlerStateChange={({nativeEvent}) => {
-            if (nativeEvent.state === State.ACTIVE) handleCloseFilters();
-          }}>
-          <View>
-            <Filters height={filterAnim} onSubmit={handleCloseFilters} />
-          </View>
-        </FlingGestureHandler>
-        {isShowModal && (
-          <ImageModal
-            image={currentImage}
-            coords={modalCoords}
-            closeModal={closeModal}
-          />
-        )}
-      </>
-    );
-  }
-
-  return <Loader />;
+      ) : (
+        <Plug text="Image not found" />
+      )}
+      <TouchableHighlight
+        onPress={isOpenFilters ? handleCloseFilters : handleOpenFilters}>
+        <Pagination icon={isOpenFilters ? 'close' : 'play-arrow'} />
+      </TouchableHighlight>
+      <FlingGestureHandler
+        direction={Directions.DOWN}
+        onHandlerStateChange={({nativeEvent}) => {
+          if (nativeEvent.state === State.ACTIVE) handleCloseFilters();
+        }}>
+        <View>
+          <Filters height={filterAnim} onSubmit={handleCloseFilters} />
+        </View>
+      </FlingGestureHandler>
+      {isShowModal && (
+        <ImageModal
+          image={currentImage}
+          coords={modalCoords}
+          closeModal={closeModal}
+        />
+      )}
+    </>
+  );
 }
 
 function startAnimation(animation: Animated.Value, value: number) {

@@ -38,8 +38,7 @@ export function Filters({height, onSubmit}: FiltersProps) {
   });
 
   const handleFilterSubmit = () => {
-    dispatch(fetchImages(filter));
-    onSubmit?.();
+    dispatch(fetchImages(filter)).then(() => onSubmit?.());
   };
 
   return (
