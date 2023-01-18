@@ -9,9 +9,10 @@ import {ViewerPhoto} from '../types';
 import {DownloadImage} from './DownloadImage';
 import {COLORS} from '../utils';
 import {routes} from '../routes';
+import {ShareButton} from './ShareButton';
 
 interface PictureInfoProps {
-  image: Omit<ViewerPhoto, 'url'>;
+  image: ViewerPhoto;
   dark?: boolean;
 }
 const ICON_SIZE = 20;
@@ -20,6 +21,7 @@ export function PictureInfo(props: PictureInfoProps) {
   const {image, dark = false} = props;
   const dispatch = useAppDispatch();
   const textColor = dark ? styles.darkText : styles.lightText;
+  const isWebGallery = Boolean(image.user);
 
   return (
     <View style={styles.imageInfo}>
@@ -39,30 +41,37 @@ export function PictureInfo(props: PictureInfoProps) {
           </Text>
         </Link>
       )}
-      {image.user && (
-        <View style={styles.row}>
-          <TouchableOpacity
-            onPress={() => dispatch(setFavoriteImage(image.id))}>
-            <View style={styles.like}>
-              <Icon
-                name="thumb-up-off-alt"
-                size={ICON_SIZE}
-                color={COLORS.secondary}
-              />
-              <Text style={textColor}> {image.likes}</Text>
-            </View>
-          </TouchableOpacity>
-          <DownloadImage url={image.links!.download}>
-            <View style={styles.download}>
-              <Icon
-                name="file-download"
-                size={ICON_SIZE}
-                color={COLORS.secondary}
-              />
-            </View>
-          </DownloadImage>
-        </View>
-      )}
+      <View style={styles.btnWrap}>
+        {isWebGallery && (
+          <View style={styles.row}>
+            <TouchableOpacity
+              onPress={() => dispatch(setFavoriteImage(image.id))}>
+              <View style={styles.like}>
+                <Icon
+                  name="thumb-up-off-alt"
+                  size={ICON_SIZE}
+                  color={COLORS.secondary}
+                />
+                <Text style={textColor}> {image.likes}</Text>
+              </View>
+            </TouchableOpacity>
+            <DownloadImage url={image.links!.download}>
+              <View style={styles.btn}>
+                <Icon
+                  name="file-download"
+                  size={ICON_SIZE}
+                  color={COLORS.secondary}
+                />
+              </View>
+            </DownloadImage>
+          </View>
+        )}
+        <ShareButton url={isWebGallery ? image.links?.html! : image.url}>
+          <View style={styles.btn}>
+            <Icon name="share" size={ICON_SIZE} color={COLORS.secondary} />
+          </View>
+        </ShareButton>
+      </View>
     </View>
   );
 }
@@ -84,7 +93,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  download: {
+  btnWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  btn: {
+    marginLeft: 10,
     borderColor: COLORS.secondary,
     borderWidth: 2,
     padding: 5,
