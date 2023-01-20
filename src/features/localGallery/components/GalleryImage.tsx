@@ -1,6 +1,6 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useMemo} from 'react';
-import {Dimensions, Image, StyleSheet, View} from 'react-native';
+import {Dimensions, Image, StyleSheet, Vibration, View} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
@@ -65,6 +65,7 @@ export function GalleryImage(props: GalleryImageProps) {
         dispatch(addSelectedItem(props.image));
         dispatch(togglePickMode());
       }
+      Vibration.vibrate();
     });
   const taps = Gesture.Exclusive(singleTap, longTap);
 

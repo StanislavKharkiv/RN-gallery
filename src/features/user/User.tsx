@@ -64,7 +64,7 @@ export function User(props: UserProps) {
       )}
       {!userName && (
         <View>
-          <Button text="my images" onTouch={onTouchMyImages} />
+          <Button text="my images" onTouch={onTouchMyImages} vibration />
         </View>
       )}
     </View>

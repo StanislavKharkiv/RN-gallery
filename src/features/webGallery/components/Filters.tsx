@@ -1,10 +1,10 @@
 import React from 'react';
-import {StyleSheet, TextInput, Button, Animated, View} from 'react-native';
+import {StyleSheet, TextInput, Animated, View} from 'react-native';
+import {Button} from '../../../components/Button';
 import {Select} from '../../../components/Select';
 import {useAppDispatch, useAppSelector} from '../../../app/hooks';
 import {fetchImages} from '../webGalleryThunk';
 import {WebGalleryFetchParams} from '../types';
-import {COLORS} from '../../../utils';
 
 const IMG_PER_PAGE: Array<number> = [10, 20, 30];
 const ORIENTATION: Array<WebGalleryFetchParams['orientation']> = [
@@ -71,11 +71,14 @@ export function Filters({height, onSubmit}: FiltersProps) {
           style={styles.select}
         />
       </View>
-      <Button
-        title="get"
-        onPress={handleFilterSubmit}
-        color={COLORS.secondary}
-      />
+      <View style={styles.submitWrap}>
+        <Button
+          text="get"
+          onTouch={handleFilterSubmit}
+          style={styles.submitBtn}
+          vibration
+        />
+      </View>
     </Animated.View>
   );
 }
@@ -101,5 +104,12 @@ const styles = StyleSheet.create({
   },
   select: {
     marginVertical: 6,
+  },
+  submitBtn: {
+    width: '100%',
+  },
+  submitWrap: {
+    paddingHorizontal: 10,
+    alignItems: 'center',
   },
 });

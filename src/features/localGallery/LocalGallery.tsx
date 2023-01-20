@@ -109,6 +109,7 @@ export function LocalGallery() {
             text={loading ? 'loading...' : 'make photo'}
             onTouch={onTouchPhoto}
             disabled={loading}
+            vibration
           />
         )}
       </View>

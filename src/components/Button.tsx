@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableOpacityProps,
+  Vibration,
 } from 'react-native';
 import {COLORS} from '../utils';
 
@@ -11,10 +12,18 @@ interface ButtonProps extends TouchableOpacityProps {
   onTouch: () => void;
   text: string;
   variant?: 'primary' | 'warning' | 'error';
+  vibration?: boolean;
 }
 
 export function Button(props: ButtonProps) {
-  const {onTouch, text, disabled, variant = 'primary'} = props;
+  const {
+    onTouch,
+    text,
+    disabled,
+    variant = 'primary',
+    vibration = false,
+  } = props;
+
   const buttonStyles = {
     primary: styles.primaryVariant,
     warning: styles.warningVariant,
@@ -24,7 +33,10 @@ export function Button(props: ButtonProps) {
   return (
     <TouchableOpacity
       style={[styles.btn, buttonStyles[variant], props.style]}
-      onPress={() => onTouch()}
+      onPress={() => {
+        onTouch();
+        if (vibration) Vibration.vibrate(100);
+      }}
       disabled={disabled}>
       <Text style={[styles.btnText, buttonStyles[variant]]}>{text}</Text>
     </TouchableOpacity>
